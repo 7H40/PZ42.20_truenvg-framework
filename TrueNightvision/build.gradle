@@ -1,0 +1,53 @@
+plugins {
+    id 'java'
+    id 'io.github.zed-0xff.zb-gradle-plugin' version '1.0.3'
+}
+
+repositories {
+    mavenCentral()
+}
+
+
+
+def pzDir = findProperty('pzDir') ?: System.getenv('PZ_DIR')
+def zombieBuddyJar = findProperty('zombieBuddyJar') ?: System.getenv('ZOMBIE_BUDDY_JAR')
+// Путь к папке мода (можно передать через -PmodDir или задать явно)
+def modDir = findProperty('modDir') ?: file('../pz-mod/42').absolutePath
+
+if (!pzDir || !zombieBuddyJar) {
+    throw new GradleException('Set -PpzDir=<ProjectZomboid folder> and -PzombieBuddyJar=<ZombieBuddy.jar>')
+}
+
+dependencies {
+    compileOnly fileTree(dir: pzDir, includes: ['**/*.jar'])
+    compileOnly files(zombieBuddyJar)
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src/main/java']
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 25
+}
+
+jar {
+    archiveFileName = 'TrueNightvision.jar'
+    // Куда кладём jar – в media/java мода
+    destinationDirectory = file("${modDir}/media/java/client")
+}
+
+zbSigning {
+    jarTask = 'jar'
+}
