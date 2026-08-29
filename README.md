@@ -1,1 +1,9 @@
-this is a mod im currently work on trying to debug stuff, it mostly uses opengl shaders truenightvision folder is just for gradle to compile it directly into pz-mod, zombiebuddy required etc
+# Сама идея
+Мод для Project Zomboid (билд 42.20), который добавляет трушную систему ночного видения с настраиваемыми параметрами и поддержкой разных поколений ЭОП.
+## Всякое
+- Несколько пресетов: GEN_1, GEN_2, GEN_2_PLUS, GEN_3_GREEN, GEN_3_WHITE, GEN_3_AUTOGATED.
+- Регулируемые параметры: усиление (gain), размытие (blur), шум (noise), автогейт (autoGated), подъём теней (shadowBoost), цвет люминофора (phosphor).
+- Возможность привязывать разные пресеты к конкретным предметам (например, очкам ночного видения).
+- Встроенный отладочный HUD для переключения пресетов и просмотра текущих значений.
+## Сборка (для компиляции)
+Исходный код Java (патчи) лежит в `TrueNightvision/src/`. Для сборки потребуется Gradle и зависимость от Zombie Buddy. Готовый JAR-файл нужно поместить в `pz-mod/42/media/java/` (эта папка в гитигноре, но необходима для работы самого  мода).
