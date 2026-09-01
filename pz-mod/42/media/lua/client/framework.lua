@@ -144,6 +144,7 @@ function EOPFramework.Settings.RegisterPreset(name, values)
     preset.autoGated = numberOr(preset.autoGated, 0.0)
     preset.shadowBoost = numberOr(preset.shadowBoost, 0.5)
     preset.color = normalizeColor(preset.color, EOPFramework.Fosfori.P45C)
+    preset.coneAngle = numberOr(preset.coneAngle, 40.0)
 
     EOPFramework.Presets[name] = preset
     return preset
@@ -225,9 +226,10 @@ function EOPFramework.Runtime.ApplyPreset(preset)
         color[3]
     )
     NVGState.updateUniforms()
-
+    
     EOPFramework.State.currentPresetName = preset.name or EOPFramework.State.currentPresetName
     EOPFramework.State.enabled = true
+    NVGState.setConeAngle(preset.coneAngle or 40.0)
     return true
 end
 
@@ -427,32 +429,38 @@ end
 EOPFramework.RegisterPreset("GEN_1", {
     gain = 2.5, blur = 3.8, noise = 0.38,
     autoGated = 1.0, shadowBoost = 0.15,
-    color = EOPFramework.Fosfori.P20
+    color = EOPFramework.Fosfori.P20,
+    coneAngle = 20
 })
 EOPFramework.RegisterPreset("GEN_2", {
     gain = 3.5, blur = 1.4, noise = 0.18,
     autoGated = 0.0, shadowBoost = 0.35,
-    color = EOPFramework.Fosfori.P43
+    color = EOPFramework.Fosfori.P43,
+    coneAngle = 40
 })
 EOPFramework.RegisterPreset("GEN_2_PLUS", {
     gain = 3.8, blur = 0.5, noise = 0.09,
     autoGated = 0.0, shadowBoost = 0.45,
-    color = EOPFramework.Fosfori.P43
+    color = EOPFramework.Fosfori.P43,
+    coneAngle = 40
 })
 EOPFramework.RegisterPreset("GEN_3_GREEN", {
     gain = 5.0, blur = 0.15, noise = 0.04,
     autoGated = 0.0, shadowBoost = 0.55,
-    color = EOPFramework.Fosfori.P43
+    color = EOPFramework.Fosfori.P43,
+    coneAngle = 40
 })
 EOPFramework.RegisterPreset("GEN_3_WHITE", {
     gain = 5.0, blur = 0.15, noise = 0.04,
     autoGated = 0.0, shadowBoost = 0.55,
-    color = EOPFramework.Fosfori.P45
+    color = EOPFramework.Fosfori.P45,
+    coneAngle = 40
 })
 EOPFramework.RegisterPreset("GEN_3_AUTOGATED", {
     gain = 6.5, blur = 0.0, noise = 0.01,
     autoGated = 1.0, shadowBoost = 0.70,
-    color = EOPFramework.Fosfori.P45C
+    color = EOPFramework.Fosfori.P45C,
+    coneAngle = 97
 })
 
 EOPFramework.RegisterCustom("HeadgearToggle", function(item, preset)
