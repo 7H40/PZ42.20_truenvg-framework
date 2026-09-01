@@ -110,6 +110,17 @@ local function setCurrentFieldValue(delta)
     end
     return applyCurrentPresetFromDebug()
 end
+
+    if NVGDebug.Initialized then
+        return true
+    end
+
+    if not EOPFramework or not EOPFramework.Settings then
+        print("ERROR FATALKA: framework.lua не загружен, Settings = nil")
+        return false
+    end
+
+    refreshPresetList()
 function NVGDebug.Init()
     if NVGDebug.Initialized then
         return true
