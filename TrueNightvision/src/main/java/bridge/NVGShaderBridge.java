@@ -65,7 +65,7 @@ public class NVGShaderBridge {
     private static void warnOnce(String uniform) {
         if (!warnedUniforms.contains(uniform)) {
             warnedUniforms.add(uniform);
-            print("error fatalka:Uniform '" + uniform + "' not found (loggiroval edin)");
+            System.out.println("error fatalka:Uniform '" + uniform + "' not found (loggiroval edin)");
         }
     }
     private static void log(String msg) {
