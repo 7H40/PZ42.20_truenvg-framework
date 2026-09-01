@@ -1,8 +1,8 @@
-name=RunningRunningRunning
+name=TrueNightvision
 id=TrueNightvision
-author=eich
-description=Experimental rendering n shieeet
-require=\ZombieBuddy
-javaJarFile=media/java/client/TrueNightVision.jar
+author=eichy
+description="https://github.com/7H40"
+require=ZombieBuddy
+javaJarFile=media/java/client/TrueNightvision.jar
 javaPkgName=com.eich.realnvg
 ZBVersionMin=2.3.2
