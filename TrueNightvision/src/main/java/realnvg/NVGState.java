@@ -12,6 +12,10 @@ public final class NVGState {
     public static volatile float phosphorB = 0.22F;
     public static volatile float nvgEnabled = 0.0F;
     public static volatile float shadowBoost = 0.5F;
+    public static volatile float coneAngle = 40.0F;
+    public static String ping() {
+        return "hi from java!";
+    }
     public static void setEnabled(float value) {
         nvgEnabled = value;
     }
@@ -32,7 +36,7 @@ public final class NVGState {
                                         shadowBoost,
                                         nvgEnabled, phosphorR, phosphorG, phosphorB);
     }
-    public static String ping() {
-        return "hi from java!";
+    public static void setConeAngle(float value) {
+        coneAngle = value;
     }
 }
