@@ -3,9 +3,9 @@ import me.zed_0xff.zombie_buddy.Patch;
 import zombie.characters.IsoGameCharacter;
 import zombie.characters.IsoPlayer;
 import java.lang.reflect.Method;
-@Patch(className = "zombie.vispoly.VisibilityPolygon2", methodName = "calculateVisionCone", warmUp = true)
+@Patch(className = "zombie.iso.LightingJNI", methodName = "calculateVisionCone", warmUp = true)
 public class Patch_VisionConeAngle {
-    private static Method degreesToConeMethod;
+    public static Method degreesToConeMethod;
     @Patch.OnExit
     public static void onExit(
             @Patch.Argument(0) IsoGameCharacter player,
@@ -18,7 +18,7 @@ public class Patch_VisionConeAngle {
         }
         try {
             if (degreesToConeMethod == null) {
-                Class<?> clazz = Class.forName("zombie.vispoly.VisibilityPolygon2");
+                Class<?> clazz = Class.forName("zombie.iso.LightingJNI");
                 degreesToConeMethod = clazz.getDeclaredMethod("degreesToCone", float.class);
                 degreesToConeMethod.setAccessible(true);
             }
