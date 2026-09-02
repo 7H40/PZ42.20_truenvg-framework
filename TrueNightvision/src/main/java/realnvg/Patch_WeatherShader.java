@@ -14,7 +14,7 @@ public final class Patch_WeatherShader {
         setFloat(programId, "u_Noise", NVGState.noise);
         setFloat(programId, "u_AutoGated", NVGState.autoGated);
         setFloat(programId, "u_ShadowBoost", NVGState.shadowBoost);
-        setFloat(programId, "u_NVGEnabled", NVGState.nvgEnabled);
+        setFloat(programId, "u_isVKL", NVGState.nvgEnabled);
         int phosphor = GL20.glGetUniformLocation(programId, "u_Phosphor");
         if (phosphor != -1) {
             GL20.glUniform3f(phosphor, NVGState.phosphorR, NVGState.phosphorG, NVGState.phosphorB);

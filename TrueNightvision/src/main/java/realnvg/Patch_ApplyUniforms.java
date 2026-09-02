@@ -16,7 +16,7 @@ public final class Patch_ApplyUniforms {
             setFloat(programId, "u_Noise", NVGState.noise);
             setFloat(programId, "u_AutoGated", NVGState.autoGated);
             setFloat(programId, "u_ShadowBoost", NVGState.shadowBoost);
-            setFloat(programId, "u_NVGEnabled", NVGState.nvgEnabled);
+            setFloat(programId, "u_isVKL", NVGState.nvgEnabled);
             
             int phosphorLoc = GL20.glGetUniformLocation(programId, "u_Phosphor");
             if (phosphorLoc != -1) {

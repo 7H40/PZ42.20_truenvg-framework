@@ -15,7 +15,7 @@ public class Patch_ScreenShader {
         String source = returnValue;
         StringBuilder sb = new StringBuilder(source);
         String uniforms = """
-            uniform float u_NVGEnabled;
+            uniform float u_isVKL;
             uniform float u_Gain;
             uniform float u_ShadowBoost;
             uniform float u_EdgeBlur;
@@ -31,9 +31,12 @@ public class Patch_ScreenShader {
                 float amplified = luminance * u_Gain;
                 float lifted = pow(luminance + 0.002, 0.35) * u_ShadowBoost * 1.2;
                 float signal = amplified + lifted;
+
                 if (u_AutoGated > 0.5) {
-                    signal = signal / (1.0 + amplified * 0.35);
+                        float gate = smoothstep(0.7, 1.2, amplified);
+                        signal = mix(signal, signal / (1.0 + amplified * 0.5), gate);
                 }
+                
                 float tubeNoise = fract(sin(dot(vUV.st + vec2(timer * 0.08), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
                 float noiseMask = 1.0 - smoothstep(0.0, 0.35, luminance);
                 signal += tubeNoise * u_Noise * (0.3 + noiseMask);
@@ -51,7 +54,7 @@ public class Patch_ScreenShader {
             sb.insert(mainIndex, nvgFunction + "\n");
         }
         String target = "col = screenWorld(col, noise);";
-        String replacement = "col = u_NVGEnabled > 0.5 ? EOP_NVG(col, noise) : screenWorld(col, noise);";
+        String replacement = "col = u_isVKL > 0.5 ? EOP_NVG(col, noise) : screenWorld(col, noise);";
         String result = sb.toString();
         if (result.contains(target)) {
             result = result.replace(target, replacement);

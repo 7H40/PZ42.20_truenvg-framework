@@ -44,7 +44,7 @@ public class NVGShaderBridge {
             setFloatInternal(program, "u_Noise", noise);
             setFloatInternal(program, "u_AutoGated", autoGated);
             setFloatInternal(program, "u_ShadowBoost", shadowBoost);
-            setFloatInternal(program, "u_NVGEnabled", nvgEnabled);
+            setFloatInternal(program, "u_isVKL", nvgEnabled);
             int phosphorLoc = GL20.glGetUniformLocation(program, "u_Phosphor");
             if (phosphorLoc != -1) {
                 GL20.glUniform3f(phosphorLoc, phosphorR, phosphorG, phosphorB);
