@@ -156,10 +156,6 @@ local function OnKeyPressed(key)
         end
         return
     end
-    if isKey(key, 73, 23) then
-        EOPFramework.Runtime.ToggleIRLight()
-        return
-    end
     if key == 203 then
         NVGDebug.Index = NVGDebug.Index - 1
         if NVGDebug.Index < 1 then NVGDebug.Index = #NVGDebug.PresetNames end
@@ -203,9 +199,8 @@ local function OnPostRender()
         string.format("Preset: %s [%d/%d]", presetName, NVGDebug.Index, #NVGDebug.PresetNames),
         0.2, 1.0, 0.2, 1.0)
     tm:DrawString(font, x, y + h * 1,
-        string.format("NVG: %s | IR: %s | Selected: %s",
+        string.format("NVG: %s | Selected: %s",
             NVGDebug.NVGOn and "ON" or "OFF",
-            EOPFramework.State.irLight.enabled and "ON" or "OFF",
             field and field.label or "-"),
         0.9, 0.9, 0.9, 1.0)
     tm:DrawString(font, x, y + h * 2,
@@ -225,7 +220,7 @@ local function OnPostRender()
             EOPFramework.State.viewCone.outer),
         0.9, 0.9, 0.9, 1.0)
     tm:DrawString(font, x, y + h * 6,
-        "Bind: C panel | J NVG | I IR light (doesntwork) | <-/-> preset | ,/. field | R/T value",
+        "Bind: C panel | J NVG | <-/-> preset | ,/. field | R/T value",
         1.0, 0.8, 0.0, 1.0)
 end
 

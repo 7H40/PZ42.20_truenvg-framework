@@ -31,12 +31,10 @@ public class Patch_ScreenShader {
                 float amplified = luminance * u_Gain;
                 float lifted = pow(luminance + 0.002, 0.35) * u_ShadowBoost * 1.2;
                 float signal = amplified + lifted;
-
                 if (u_AutoGated > 0.5) {
                         float gate = smoothstep(0.7, 1.2, amplified);
                         signal = mix(signal, signal / (1.0 + amplified * 0.5), gate);
                 }
-                
                 float tubeNoise = fract(sin(dot(vUV.st + vec2(timer * 0.08), vec2(12.9898, 78.233))) * 43758.5453) - 0.5;
                 float noiseMask = 1.0 - smoothstep(0.0, 0.35, luminance);
                 signal += tubeNoise * u_Noise * (0.3 + noiseMask);

@@ -5,14 +5,6 @@ EOPFramework.Config = EOPFramework.Config or {
     defaultToggleMode = "AUTO",
     defaultEnabled = true,
     debug = true,
-    irLight = {
-        enabled = false,
-        radius = 12,
-        intensity = 0.28,
-        offset = 1.5,
-        color = {0.90, 0.96, 1.00},
-        updateInterval = 0.08
-    },
     viewCone = {
         enabled = false,
         strength = 0.0,
@@ -20,7 +12,6 @@ EOPFramework.Config = EOPFramework.Config or {
         outer = 1.0
     }
 }
-
 EOPFramework.Fosfori = EOPFramework.Fosfori or {
     P20          = {0.10, 0.92, 0.12},
     P43          = {0.18, 0.95, 0.22},
@@ -30,7 +21,6 @@ EOPFramework.Fosfori = EOPFramework.Fosfori or {
     Amber_Yellow = {0.95, 0.68, 0.12},
     Red_Night    = {0.95, 0.20, 0.10}
 }
-
 EOPFramework.Presets = EOPFramework.Presets or {}
 EOPFramework.Items = EOPFramework.Items or {
     mappings = {},
@@ -49,19 +39,13 @@ EOPFramework.State = EOPFramework.State or {
         strength = 0.0,
         inner = 0.0,
         outer = 1.0
-    },
-    irLight = {
-        enabled = false,
-        lastUpdate = 0.0
     }
 }
-
 local function clamp(value, minimum, maximum)
     if value < minimum then return minimum end
     if value > maximum then return maximum end
     return value
 end
-
 local function numberOr(value, fallback)
     local v = tonumber(value)
     if v == nil then
@@ -69,7 +53,6 @@ local function numberOr(value, fallback)
     end
     return v
 end
-
 local function normalizeColor(color, fallback)
     local fallbackColor = fallback or EOPFramework.Fosfori.P45C
     if type(color) ~= "table" then
@@ -85,18 +68,14 @@ local function normalizeColor(color, fallback)
         numberOr(color[3], fallbackColor[3] or 1.0)
     }
 end
-
 local function log(message)
     if EOPFramework.Config.debug then
         print("[EOPFramework] " .. tostring(message))
     end
 end
-
 EOPFramework.Settings = EOPFramework.Settings or {}
 EOPFramework.Runtime = EOPFramework.Runtime or {}
 EOPFramework.Debug = EOPFramework.Debug or {}
-
--- Compatibility aliases for older call sites and legacy loader code.
 EOPFramework.RegisterPreset = EOPFramework.Settings.RegisterPreset or function(name, values)
     return EOPFramework.Settings.RegisterPreset(name, values)
 end
@@ -130,7 +109,6 @@ end
 EOPFramework.OnPlayerUnequipped = EOPFramework.Runtime.OnPlayerUnequipped or function(item)
     return EOPFramework.Runtime.OnPlayerUnequipped(item)
 end
-
 function EOPFramework.Settings.RegisterPreset(name, values)
     if type(name) ~= "string" or name == "" then
         return false
@@ -149,11 +127,9 @@ function EOPFramework.Settings.RegisterPreset(name, values)
     EOPFramework.Presets[name] = preset
     return preset
 end
-
 function EOPFramework.Settings.GetPreset(name)
     return EOPFramework.Presets[name]
 end
-
 function EOPFramework.Settings.SetPresetValue(name, key, value)
     local preset = EOPFramework.Settings.GetPreset(name)
     if not preset then
@@ -173,7 +149,6 @@ function EOPFramework.Settings.SetPresetValue(name, key, value)
     preset[key] = value
     return true
 end
-
 function EOPFramework.Settings.ApplyPreset(name)
     local preset = EOPFramework.Settings.GetPreset(name)
     if not preset then
@@ -182,11 +157,9 @@ function EOPFramework.Settings.ApplyPreset(name)
     end
     return EOPFramework.Runtime.ApplyPreset(preset)
 end
-
 function EOPFramework.Settings.GetCurrentPreset()
     return EOPFramework.Settings.GetPreset(EOPFramework.State.currentPresetName)
 end
-
 function EOPFramework.Settings.GetEditableFields()
     return {
         { key = "gain", label = "Gain", min = 0.0, max = 20.0, step = 0.1 },
@@ -203,7 +176,6 @@ function EOPFramework.Settings.GetEditableFields()
         { key = "viewConeOuter", label = "Cone Outer", min = 0.0, max = 1.0, step = 0.05 }
     }
 end
-
 function EOPFramework.Runtime.ApplyPreset(preset)
     if not preset then
         log("ApplyPreset called with nil preset")
@@ -232,7 +204,6 @@ function EOPFramework.Runtime.ApplyPreset(preset)
     NVGState.setConeAngle(preset.coneAngle or 40.0)
     return true
 end
-
 function EOPFramework.Runtime.Enable()
     if not NVGState then
         return false
@@ -242,7 +213,6 @@ function EOPFramework.Runtime.Enable()
     EOPFramework.State.enabled = true
     return true
 end
-
 function EOPFramework.Runtime.Disable()
     if not NVGState then
         return false
@@ -252,14 +222,12 @@ function EOPFramework.Runtime.Disable()
     EOPFramework.State.enabled = false
     return true
 end
-
 function EOPFramework.Runtime.Toggle()
     if EOPFramework.State.enabled then
         return EOPFramework.Runtime.Disable()
     end
     return EOPFramework.Runtime.Enable()
 end
-
 function EOPFramework.Runtime.SetViewCone(enabled, strength, inner, outer)
     EOPFramework.State.viewCone = {
         enabled = enabled == true,
@@ -278,61 +246,6 @@ function EOPFramework.Runtime.SetViewCone(enabled, strength, inner, outer)
     end
     return EOPFramework.State.viewCone
 end
-
-function EOPFramework.Runtime.SetIRLight(enabled, radius, intensity, color)
-    local ir = EOPFramework.State.irLight
-    ir.enabled = enabled == true
-    ir.radius = math.max(1, math.min(20, tonumber(radius) or EOPFramework.Config.irLight.radius))
-    ir.intensity = math.max(0.0, math.min(0.5, tonumber(intensity) or EOPFramework.Config.irLight.intensity))
-    ir.color = normalizeColor(color, EOPFramework.Config.irLight.color)
-
-    if not ir.enabled and IRLightBridge then
-        IRLightBridge.removeLocalLight()
-    end
-
-    return ir
-end
-
-function EOPFramework.Runtime.ToggleIRLight()
-    local ir = EOPFramework.State.irLight
-    return EOPFramework.Runtime.SetIRLight(
-        not ir.enabled,
-        ir.radius,
-        ir.intensity,
-        ir.color
-    )
-end
-
-function EOPFramework.Runtime.UpdateIRLight(player, force)
-    local ir = EOPFramework.State.irLight
-    if not ir.enabled or not player or not IRLightBridge then
-        return false
-    end
-
-    local now = getTimestampMs and getTimestampMs() / 1000.0 or 0.0
-    if not force and now > 0.0 and now - ir.lastUpdate < EOPFramework.Config.irLight.updateInterval then
-        return false
-    end
-
-    local directionX = player:getForwardDirectionX()
-    local directionY = player:getForwardDirectionY()
-    local color = ir.color or EOPFramework.Config.irLight.color
-    IRLightBridge.setLocalLight(
-        player:getX(),
-        player:getY(),
-        player:getZ(),
-        directionX,
-        directionY,
-        ir.radius,
-        ir.intensity,
-        color[1],
-        color[2],
-        color[3]
-    )
-    ir.lastUpdate = now
-    return true
-end
-
 function EOPFramework.Runtime.ApplyEquipment(item)
     if not item then
         return false
@@ -363,15 +276,12 @@ function EOPFramework.Runtime.ApplyEquipment(item)
 
     return EOPFramework.Runtime.ApplyPreset(preset)
 end
-
 function EOPFramework.Runtime.OnPlayerEquipped(item)
     return EOPFramework.Runtime.ApplyEquipment(item)
 end
-
 function EOPFramework.Runtime.OnPlayerUnequipped(item)
     return EOPFramework.Runtime.Disable()
 end
-
 function EOPFramework.RegisterCustom(name, callback)
     if type(name) ~= "string" or type(callback) ~= "function" then
         return false
@@ -379,7 +289,6 @@ function EOPFramework.RegisterCustom(name, callback)
     EOPFramework.Custom[name] = callback
     return true
 end
-
 function EOPFramework.RegisterItemMapping(fullType, presetName, options)
     local preset = EOPFramework.Presets[presetName]
     if not preset then
@@ -397,7 +306,6 @@ function EOPFramework.RegisterItemMapping(fullType, presetName, options)
     }
     return true
 end
-
 function EOPFramework.RegisterVanillaDefault(itemType, presetName, mode, custom)
     return EOPFramework.RegisterItemMapping(itemType, presetName, {
         mode = mode or EOPFramework.Config.defaultToggleMode,
@@ -405,7 +313,6 @@ function EOPFramework.RegisterVanillaDefault(itemType, presetName, mode, custom)
         toggle = "DEFAULT"
     })
 end
-
 function EOPFramework.Init()
     if not NVGState then
         log("NVGState missing")
@@ -425,7 +332,6 @@ function EOPFramework.Init()
 
     return true
 end
-
 EOPFramework.RegisterPreset("GEN_1", {
     gain = 2.5, blur = 3.8, noise = 0.38,
     autoGated = 1.0, shadowBoost = 0.15,
@@ -462,37 +368,24 @@ EOPFramework.RegisterPreset("GEN_3_AUTOGATED", {
     color = EOPFramework.Fosfori.P45C,
     coneAngle = 97
 })
-
 EOPFramework.RegisterCustom("HeadgearToggle", function(item, preset)
     EOPFramework.Runtime.ApplyPreset(preset)
     EOPFramework.Runtime.Enable()
     EOPFramework.Runtime.SetViewCone(true, 0.35, 0.10, 0.85)
-    EOPFramework.Runtime.SetIRLight(false)
     return true
 end)
-
 EOPFramework.RegisterCustom("ViewConeBoost", function(item, preset)
     EOPFramework.Runtime.ApplyPreset(preset)
     EOPFramework.Runtime.SetViewCone(true, 0.65, 0.15, 0.90)
-    EOPFramework.Runtime.SetIRLight(false)
     EOPFramework.Runtime.Enable()
     return true
 end)
-
 EOPFramework.RegisterCustom("MenuToggle", function(item, preset)
     EOPFramework.Runtime.ApplyPreset(preset)
     EOPFramework.Runtime.Toggle()
     return true
 end)
-
 EOPFramework.RegisterVanillaDefault("Base.NVG", "GEN_3_AUTOGATED", "AUTO", "HeadgearToggle")
 EOPFramework.RegisterVanillaDefault("Base.Hat", "GEN_2_PLUS", "AUTO", "ViewConeBoost")
 EOPFramework.RegisterVanillaDefault("Base.Glasses", "GEN_3_GREEN", "AUTO")
-
-Events.OnPlayerUpdate.Add(function(player)
-    if player == getPlayer() then
-        EOPFramework.Runtime.UpdateIRLight(player, false)
-    end
-end)
-
 return EOPFramework
