@@ -21,7 +21,7 @@ public class NVGShaderBridge {
                     return cachedShaderID;
                 }
             }
-            System.out.println("error fatalka:Shader NOT found!");
+            System.out.println("error fatalka:Shader NOT found!(java)");
             return -1;
         }
     public static void setDebug(boolean v) {
